@@ -1,0 +1,42 @@
+{% extends 'base.html' %} {% block content %}
+<table class="table table-light table-striped table-hover">
+  <thead>
+    <tr>
+      <th scope="col">Book</th>
+      <th scope="col">Author</th>
+      <th scope="col">Price</th>
+      <th scope="col">Books Left</th>
+      <th scope="col">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for book in books %}
+    <tr>
+      <th scope="row">{{ book.name }}</th>
+      <td>{{ book.author.name }}</td>
+      <td>Rs. {{ book.price }}</td>
+      <td>{{ book.books_left }}</td>
+      <td>
+        {% if book.is_borrowed %}
+        <form method="POST" action="{% url 'books:return_book' book.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-secondary">Return</button>
+        </form>
+        {% else %}
+        <form method="POST" action="{% url 'books:borrow_book' book.id %}">
+            {% csrf_token %}
+            <div class="d-flex align-items-center">
+                <input type="number" class="form-control me-2" name="days" placeholder="Borrow Duration (in days)" style="max-width: 250px;">
+                <button type="submit" class="btn btn-outline-primary">Borrow</button>
+            </div>
+        </form>
+        {% endif %}
+    </td>
+    
+    </tr>
+    {% empty %}
+    <p> No books to display! </p>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

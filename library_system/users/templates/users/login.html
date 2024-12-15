@@ -1,8 +1,8 @@
-{% extends 'users/base.html' %}
+{% extends 'base.html' %}
 
 {% block content %}
 <div class="col-md-4 offset-md-4">
-  <form method = "POST" action="{% url 'login' %}">
+  <form method = "POST" action="{% url 'users:login' %}">
     {% csrf_token %}
     <div class="mb-3">
       <label for="username" class="form-label">Username</label>
