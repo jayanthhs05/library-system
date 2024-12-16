@@ -4,11 +4,11 @@
   <p class="text-center">Your balance is Rs. {{ total_bill }}</p>
   {% else %}
   <p class="text-center">You need to pay Rs. {{ total_bill }}</p>
-  {% endif %} {% if transactions %}
-  <!-- Payment Form -->
+  {% endif %}
   <form method="POST" action="{% url 'transactions:payment' %}">
     {% csrf_token %}
     <div class="d-flex align-items-center mb-3">
+      Rs.&nbsp;&nbsp; 
       <input
         type="number"
         class="form-control me-2"
@@ -19,8 +19,8 @@
       <button type="submit" class="btn btn-outline-primary">Pay</button>
     </div>
   </form>
+  {% if transactions %}
 
-  <!-- Transactions Table -->
   <table class="table table-light table-hover">
     <thead>
       <tr>
