@@ -23,8 +23,9 @@ def login_user(request):
             messages.success(request, "You are successfully logged in!")
             return redirect("books:home")
         else:
-            messages.error(request,
-                "Either the username or the password is wrong, please try again."
+            messages.error(
+                request,
+                "Either the username or the password is wrong, please try again.",
             )
             return redirect("users:login")
     return render(request, "users/login.html")
@@ -51,7 +52,21 @@ def register_user(request):
             messages.success(request, "You are registered successfully!")
             return redirect("books:home")
         else:
-            messages.error(request, "Something went wrong, check everything is correct again!")
+            messages.error(
+                request, "Something went wrong, check everything is correct again!"
+            )
             return render(request, "users/register.html", {"form": form})
     form = RegisterForm()
     return render(request, "users/register.html", {"form": form})
+
+
+def user_profile(request):
+    if not request.user.is_authenticated:
+        messages.error(request, "You need to be logged in to access the page!")
+        return redirect("users:login")
+    borrowed_books =  request.user.borrowed_books.all()
+    return render(
+        request,
+        "users/profile.html",
+        {"user": request.user, "borrowed_books":borrowed_books},
+    )

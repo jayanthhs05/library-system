@@ -1,10 +1,12 @@
 {% extends 'base.html' %} {% block content %}
+<div class="col-md-10 offset-md-1">
+{% if books %}
 <table class="table table-light table-striped table-hover">
   <thead>
     <tr>
       <th scope="col">Book</th>
       <th scope="col">Author</th>
-      <th scope="col">Price</th>
+      <th scope="col">Price (per day) </th>
       <th scope="col">Books Left</th>
       <th scope="col">Actions</th>
     </tr>
@@ -12,31 +14,56 @@
   <tbody>
     {% for book in books %}
     <tr>
-      <th scope="row">{{ book.name }}</th>
-      <td>{{ book.author.name }}</td>
+      <th scope="row">
+        <a
+          class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
+          href="{% url 'books:book_view' book.id %}"
+        >
+          {{ book.name }}
+        </a>
+      </th>
+      <td>
+        <a
+          class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
+          href="{% url 'books:author_view' book.author.id %}"
+        >
+          {{ book.author.name }}
+        </a>
+      </td>
       <td>Rs. {{ book.price }}</td>
       <td>{{ book.books_left }}</td>
       <td>
         {% if book.is_borrowed %}
         <form method="POST" action="{% url 'books:return_book' book.id %}">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-outline-secondary">Return</button>
+          {% csrf_token %}
+          <button type="submit" class="btn btn-outline-secondary">
+            Return
+          </button>
         </form>
         {% else %}
         <form method="POST" action="{% url 'books:borrow_book' book.id %}">
-            {% csrf_token %}
-            <div class="d-flex align-items-center">
-                <input type="number" class="form-control me-2" name="days" placeholder="Borrow Duration (in days)" style="max-width: 250px;">
-                <button type="submit" class="btn btn-outline-primary">Borrow</button>
-            </div>
+          {% csrf_token %}
+          <div class="d-flex align-items-center">
+            <input
+              type="number"
+              class="form-control me-2"
+              name="days"
+              placeholder="Borrow Duration (in days)"
+              style="max-width: 250px"
+            />
+            <button type="submit" class="btn btn-outline-primary">
+              Borrow
+            </button>
+          </div>
         </form>
         {% endif %}
-    </td>
-    
+      </td>
     </tr>
-    {% empty %}
-    <p> No books to display! </p>
     {% endfor %}
   </tbody>
 </table>
+{% else %}
+<p class="text-center">No books to display!</p>
+{% endif %}
+</div>
 {% endblock %}

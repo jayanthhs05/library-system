@@ -1,0 +1,51 @@
+{% extends 'base.html' %} {% block content %}
+<div class="col-md-4 offset-md-4">
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">{{ book.name }}</h5>
+      <h6 class="card-subtitle mb-2 text-body-secondary">
+        <strong>Author: </strong>
+        <a
+          class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
+          href="{% url 'books:author_view' book.author.id %}"
+        >
+          {{ book.author.name }}
+        </a>
+      </h6>
+      <h6 class="card-subtitle mb-2 text-body-secondary">
+        {{ book.description }}
+      </h6>
+      <p class = "card-text"> <strong>Price (per day):</strong> {{ book.price }}</p>
+      <p class = "card-text"> <strong>Books left:</strong> {{ book.books_left }}</p>
+      {% if borrowed %}
+      <p class = "card-text"> You have borrowed this book. </p>
+      <form
+        method="POST"
+        action="{% url 'books:return_book' book.id %}?next={{ request.path }}"
+      >
+        {% csrf_token %}
+        <button type="submit" class="btn btn-outline-secondary">Return</button>
+      </form>
+      {% else %}
+      <p class = "card-text"> You have not borrowed this book. </p>
+      <form method="POST" action="{% url 'books:borrow_book' book.id %}?next={{ request.path }}">
+        {% csrf_token %}
+        <div class="d-flex align-items-center">
+          <input
+            type="number"
+            class="form-control me-2"
+            name="days"
+            placeholder="Borrow Duration (in days)"
+            style="max-width: 250px"
+          />
+          <button type="submit" class="btn btn-outline-primary">Borrow</button>
+        </div>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+  <p class="text-center">
+    <a href="{% url 'books:home' %}">Go back to home</a>
+  </p>
+</div>
+{% endblock %}

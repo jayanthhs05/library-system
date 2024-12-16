@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 class Author(models.Model):
     name = models.CharField(max_length=100)
-
+    description = models.TextField(default="")
     def __str__(self):
         return f"{self.name}"
 
@@ -12,6 +12,7 @@ class Author(models.Model):
 class Book(models.Model):
     name = models.CharField(max_length=100)
     author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="books")
+    description = models.TextField(default="")
     price = models.DecimalField(decimal_places=2, max_digits=10)
     books_left = models.IntegerField()
 
