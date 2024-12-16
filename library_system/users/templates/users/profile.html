@@ -11,28 +11,42 @@
       </h6>
     </div>
   </div>
+  <p class="text-center">
+    To view your balance and transaction history, click
+    <a
+      class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
+      href="{% url 'transactions:home' %}"
+    >
+      here
+    </a>
+  </p>
   {% if borrowed_books %}
   <table class="table table-light table-striped table-hover">
-      <thead>
-          <tr>
-              <th scope="col">Book</th>
-              <th scope="col">Author</th>
-              <th scope="col">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-    {% for instance in borrowed_books %}
+    <thead>
+      <tr>
+        <th scope="col">Book</th>
+        <th scope="col">Author</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for instance in borrowed_books %}
       <tr>
         <th scope="row">{{ instance.book.name }}</th>
         <td>{{ instance.book.author.name }}</td>
         <td>
-        <form method="POST" action="{% url 'books:return_book' instance.book.id %}?next={{ request.path }}">
+          <form
+            method="POST"
+            action="{% url 'books:return_book' instance.book.id %}?next={{ request.path }}"
+          >
             {% csrf_token %}
-            <button type="submit" class="btn btn-outline-secondary">Return</button>
-        </form>
+            <button type="submit" class="btn btn-outline-secondary">
+              Return
+            </button>
+          </form>
         </td>
       </tr>
-    {% endfor %}
+      {% endfor %}
     </tbody>
   </table>
   <p class="text-center">

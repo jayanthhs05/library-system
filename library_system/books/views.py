@@ -1,8 +1,9 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, resolve_url
 from django.contrib import messages
 from django.db.models import Q
 from .models import Book, Instance, Author
 from django.utils.http import url_has_allowed_host_and_scheme
+from transactions.models import Transaction
 
 
 def home(request):
@@ -28,18 +29,18 @@ def borrow_book(request, pk):
         messages.error(request, "You need to be logged in to access the page!")
         return redirect("users:login")
     if request.method == "POST":
-        next_url = request.GET.get("next", "")
+        next_url = request.GET.get("next", resolve_url("books:home"))
         if not url_has_allowed_host_and_scheme(
-            next_url, allowed_hosts=request.get_host()
+            next_url, allowed_hosts={request.get_host()}
         ):
-            return redirect("books:home")
+            next_url = resolve_url("books:home")
         user = request.user
         try:
             book = Book.objects.get(id=pk)
         except:
             messages.error(request, "The book was not found!")
             return redirect(next_url)
-        if Instance.objects.filter(book=book).exists():
+        if Instance.objects.filter(user=user, book=book).exists():
             messages.error(request, "You have already borrowed the book!")
             return redirect(next_url)
         if book.books_left <= 0:
@@ -58,6 +59,9 @@ def borrow_book(request, pk):
         bill = book.price * days
         user.profile.total_bill += bill
         user.profile.save()
+        transaction = Transaction.objects.create(
+            user=user, book=book, days_borrowed=days, amount=bill
+        )
         messages.success(
             request,
             f"{book} successfully borrowed for {days} day(s)! Your bill for this transaction is Rs. {bill}",
@@ -66,16 +70,17 @@ def borrow_book(request, pk):
     messages.error(request, "You are not allowed to access the page!")
     return redirect("books:home")
 
+
 def return_book(request, pk):
     if not request.user.is_authenticated:
         messages.error(request, "You need to be logged in to access the page!")
         return redirect("users:login")
     if request.method == "POST":
-        next_url = request.GET.get("next", "")
+        next_url = request.GET.get("next", resolve_url("books:home"))
         if not url_has_allowed_host_and_scheme(
-            next_url, allowed_hosts=request.get_host()
+            next_url, allowed_hosts={request.get_host()}
         ):
-            return redirect("books:home")
+            next_url = resolve_url("books:home")
         user = request.user
         try:
             book = Book.objects.get(id=pk)

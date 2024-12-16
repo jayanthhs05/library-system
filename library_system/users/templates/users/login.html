@@ -1,18 +1,26 @@
-{% extends 'base.html' %}
-
-{% block content %}
+{% extends 'base.html' %} {% block content %}
 <div class="col-md-4 offset-md-4">
-  <form method = "POST" action="{% url 'users:login' %}">
+  <form method="POST" action="{% url 'users:login' %}">
     {% csrf_token %}
     <div class="mb-3">
       <label for="username" class="form-label">Username</label>
-      <input type="text" class="form-control" name="username">
+      <input type="text" class="form-control" name="username" />
+    </div>
     <div class="mb-3">
       <label for="password" class="form-label">Password</label>
-      <input type="password" class="form-control" name="password">
+      <input type="password" class="form-control" name="password" />
     </div>
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>
+  <p class="text-center">
+    If you do not have an account, please
+    <a
+      class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
+      href="{% url 'users:register' %}"
+    >
+      register</a
+    >
+    to continue.
+  </p>
 </div>
-
 {% endblock %}
